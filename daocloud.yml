@@ -1,9 +1,6 @@
 version 2.0
 
 test:
-    image:
-        daocloud/ci-golang:1.6
-
 
 build:
   image:
