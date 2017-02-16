@@ -1,0 +1,46 @@
+<!DOCTYPE>
+<html>
+  <head>
+      <meta charset="utf-8"></meta>
+      <title>nace的PY后宫</title>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+      <link rel="stylesheet" href="https://unpkg.com/vue-material@0.6.3/dist/vue-material.css">
+      <link rel="stylesheet" href="./css/chat.css"></link>
+  </head>
+  <body>
+    <div id="main">
+      <!-- topic chat-->
+      <div  id="sidebar">
+
+          <md-button class="md-icon-button" >
+              <md-icon>menu</md-icon>
+          </md-button>
+
+      </div>
+      <!-- Chat window -->
+      <div  id="chatscreen">
+          <md-whiteframe md-elevation="20">
+              <div id="chatwindow">
+                  <p v-for="(content, index) in contents">
+                      {{content}}
+                  </p>
+              </div>
+          </md-whiteframe>
+      </div>
+      <!-- Input form -->
+      <div id="inputbar">
+        <md-input-container>
+          <md-input v-model="msg" type="text" placeholder="多多PY有益身心健康呦~"></md-input>
+          <md-button class="md-icon-button md-primary" @click="send">
+            <md-icon>send</md-icon>
+          </md-button>
+        </md-input-container>
+
+      </div>
+    </div>
+      <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+      <script src="https://unpkg.com/vue-material@0.6.3"></script>
+      <script src="./js/chat.js"></script>
+  </body>
+</html>
