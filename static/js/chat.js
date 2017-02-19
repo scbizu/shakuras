@@ -11,7 +11,7 @@ new Vue({
 })
 
 var chats = new Vue({
-  el:"#chatscreen",
+  el:"#screen",
   data:{
       contents:[
 
@@ -43,7 +43,7 @@ if (window["WebSocket"]) {
     conn = new WebSocket("ws://localhost:8090/ws")
     //conn close callback
     conn.onclose = function(e){
-      chats.contents.push("user quited")
+      chats.contents.push("聊天室网线被踹断啦(PД`q。=)>·。'゜")
     }
 
     conn.onmessage = function(e){

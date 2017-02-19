@@ -2,7 +2,6 @@ package chat
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"time"
 
@@ -53,8 +52,7 @@ func (cli *Client) ReadMsg() error {
 		if err != nil {
 			//websocket connection error
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
-				log.Fatal(err)
-				return err
+				return errors.New("read error")
 			}
 		}
 		//solve msg and sp characters

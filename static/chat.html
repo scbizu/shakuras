@@ -18,16 +18,26 @@
           </md-button>
 
       </div>
-      <!-- Chat window -->
-      <div  id="chatscreen">
-          <md-whiteframe md-elevation="20">
-              <div id="chatwindow">
-                  <p v-for="(content, index) in contents">
-                      {{content}}
-                  </p>
+
+      <div id="screen">
+          <!-- media window -->
+              <div id="media">
+
               </div>
-          </md-whiteframe>
+
+            <!-- chatscreen -->
+                <div id="chatscreen">
+                  <p>
+                    > Nace:剧透一时爽,嘿嘿嘿嘿嘿 (￣_,￣ =)>
+                  </p>
+                  <hr>
+                      <p v-for="(content, index) in contents">
+                        {{content}}
+                      </p>
+
+                </div>
       </div>
+
       <!-- Input form -->
       <div id="inputbar">
         <md-input-container>
