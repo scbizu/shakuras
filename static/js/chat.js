@@ -17,6 +17,31 @@ var chats = new Vue({
 
       ],
   },
+
+  methods:{
+
+    playORpause:function(){
+      var player = document.getElementById("player");
+
+      if(player.paused){
+        player.play();
+      }else{
+        player.pause();
+      }
+    },
+
+    fullScreen:function(){
+      var player = document.getElementById("player");
+
+        if (player.requestFullscreen) {
+        player.requestFullscreen();
+      } else if (player.mozRequestFullScreen) {
+        player.mozRequestFullScreen();
+      } else if (player.webkitRequestFullscreen) {
+        player.webkitRequestFullscreen();
+      }
+    },
+  },
 })
 
 
@@ -27,6 +52,7 @@ new Vue({
   },
   methods:{
     send: function(){
+
         if(!conn){
           console.error("conn was not inited.");
         }

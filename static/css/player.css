@@ -1,0 +1,9 @@
+
+#controlbar {
+  z-index: 2147483647;
+  background-color: white;
+}
+
+video::-webkit-media-controls {
+  display:none !important;
+}

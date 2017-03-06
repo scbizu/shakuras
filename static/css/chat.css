@@ -11,9 +11,9 @@
 #media {
   width: 60%;
   font-size: 18px;
-  color: #11e213;
+  /*color: #11e213;*/
   display: block;
-  background-color: black;
+  /*background-color: black;*/
   top:20vh;
   height: 75vh;
 }

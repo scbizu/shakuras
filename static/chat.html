@@ -7,6 +7,7 @@
       <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
       <link rel="stylesheet" href="https://unpkg.com/vue-material@0.6.3/dist/vue-material.css">
       <link rel="stylesheet" href="./css/chat.css"></link>
+      <link rel="stylesheet" href="./css/player.css"></link>
   </head>
   <body>
     <div id="main">
@@ -22,7 +23,12 @@
       <div id="screen">
           <!-- media window -->
               <div id="media">
-
+                <video id="player"  preload="auto" src="./video/videoplayback.mp4">
+                </video>
+                <div id="controlbar">
+                    <md-button @click.native="playORpause">Play/Pause</md-button>
+                    <md-button @click.native="fullScreen">FullScreen</md-button>
+                </div>
               </div>
 
             <!-- chatscreen -->
@@ -42,7 +48,7 @@
       <div id="inputbar">
         <md-input-container>
           <md-input v-model="msg" type="text" placeholder="多多PY有益身心健康呦~"></md-input>
-          <md-button class="md-icon-button md-primary" @click="send">
+          <md-button class="md-icon-button md-primary" @click.native="send">
             <md-icon>send</md-icon>
           </md-button>
         </md-input-container>
@@ -50,7 +56,8 @@
       </div>
     </div>
       <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
-      <script src="https://unpkg.com/vue-material@0.6.3"></script>
+      <script src="https://unpkg.com/vue-material@0.7.1"></script>
       <script src="./js/chat.js"></script>
+      <script src="./js/player.js"></script>
   </body>
 </html>
