@@ -1,0 +1,11 @@
+*.out
+
+*.dll
+*.so
+
+*.test
+
+*.mp4
+*.flv
+
+.glide/
