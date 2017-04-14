@@ -15,26 +15,74 @@
   display: block;
   /*background-color: black;*/
   top:20vh;
-  height: 75vh;
 }
+.progressor {
+
+}
+
 
 #chatscreen {
   border-width: 2px;
   border-color: black;
-  width: 25%;
+  width: 30%;
   font-size: 10px;
   /*color: #11e213;*/
-  display: block;
   overflow-x:hidden;
   overflow-y:auto;
-  height: 75vh;
-  margin-left: 75%;
-  margin-top: -75vh;
+  height: 45vh;
+  position: fixed;
+  top:0;
+  margin-top: 4%;
+  margin-left: 50%;
   background-color: rgba(247, 247, 247, 0.87);
 }
+
+.md-input-container {
+  width: 100%;
+  min-height: 40px;
+  margin: 4px 0 24px;
+  padding-top: 0px;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+}
+
+.md-theme-default.md-progress {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.md-theme-default.md-progress:not(.md-indeterminate) .md-progress-track {
+    background-color: rgba(33, 150, 243, .38);
+}
+
 #inputbar{
-  width: 50%;
+  padding-top: 0px;
+  width: 57%;
+  margin-left: 3%;
+  display: inline-flex;
+  /*margin-top: 5vh;*/
+  /*vertical-align:top;*/
+}
+
+.sidenavlist{
+    padding-right: 0px;
+    padding-left: 0px;
+
+}
+.series{
+  position: relative;
+  margin-top: 2vh;
   margin-left: 15%;
-  margin-top: 5vh;
-  vertical-align:top;
+}
+
+.about{
+  position: relative;
+  margin-left: 15%;
+  margin-top: 8vh;
+  bottom: 5vh;
+}
+
+.qa{
+
+    min-width: 0;
 }
