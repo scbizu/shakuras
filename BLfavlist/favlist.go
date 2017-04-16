@@ -4,17 +4,21 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
+	"sync"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 //FavInfo  read things from yaml
 type FavInfo struct {
-	hub struct {
-		UID string `yaml:"uid"`
-	}
+	Hub struct {
+		UID int `yaml:"uid"`
+	} `yaml:"hub"`
 }
 
 //BucketInfo  read the buckets data
@@ -46,8 +50,18 @@ type FavList struct {
 }
 
 //read uid from yaml
-func readFavList() string {
-	return ""
+func readFavList() (*FavInfo, error) {
+
+	yamldata, err := ioutil.ReadFile("favlist.yaml")
+	if err != nil {
+		return nil, err
+	}
+	favinfo := new(FavInfo)
+	err = yaml.Unmarshal(yamldata, favinfo)
+	if err != nil {
+		return nil, err
+	}
+	return favinfo, nil
 }
 
 //return rsc address
@@ -136,9 +150,37 @@ func getFavList(UID string, BID int) ([]int, error) {
 }
 
 //Run run the whole program
-// func Run() {
-// 	binfo, err := getBucketID("11124261")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
+func (fav *FavInfo) Run() error {
+	//get bucket
+	var wg sync.WaitGroup
+
+	avlists := []int{}
+	binfo, err := getBucketID(strconv.Itoa(fav.Hub.UID))
+	if err != nil {
+		return err
+	}
+	for _, v := range binfo {
+		favlists, er := getFavList(strconv.Itoa(fav.Hub.UID), v)
+		if er != nil {
+			return err
+		}
+		for _, avid := range favlists {
+			avlists = append(avlists, avid)
+		}
+	}
+
+	for _, av := range avlists {
+
+		wg.Add(1)
+		go func(vid int) {
+			println(vid)
+			defer wg.Done()
+			err = analyseFavList(strconv.Itoa(vid))
+			if err != nil {
+				log.Fatalln(err.Error())
+			}
+		}(av)
+	}
+	wg.Wait()
+	return nil
+}

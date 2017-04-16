@@ -29,11 +29,22 @@ func TestGetFavListInfo(t *testing.T) {
 
 }
 
-func TestGetAV(t *testing.T) {
-	err := analyseFavList("8059894")
+func TestYaml(t *testing.T) {
+	uid, err := readFavList()
 	if err != nil {
 		t.Error(err)
 	} else {
-		t.Log("Downloaded")
+		t.Logf("%v\n", uid)
+	}
+}
+
+func TestGetAV(t *testing.T) {
+	FavInfo, err := readFavList()
+	if err != nil {
+		t.Error(err)
+	}
+	err = FavInfo.Run()
+	if err != nil {
+		t.Error(err)
 	}
 }
