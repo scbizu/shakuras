@@ -8,4 +8,5 @@
 *.mp4
 *.flv
 
+*.db
 .glide/
