@@ -5,9 +5,11 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"model"
 	"net/http"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"sync"
 
@@ -44,7 +46,9 @@ type FavList struct {
 	Status bool `json:"status"`
 	Data   struct {
 		Vlist []struct {
-			AID int `json:"aid"`
+			AID   int      `json:"aid"`
+			Tags  []string `json:"tags"`
+			Title string   `json:"title"`
 		} `json:"vlist"`
 	} `json:"data"`
 }
@@ -71,7 +75,8 @@ func analyseFavList(AID string) error {
 		return err
 	}
 	defer resp.Body.Close()
-	av, err := os.Create(AID + ".flv")
+	path, _ := filepath.Abs("../static/video/" + AID + ".flv")
+	av, err := os.Create(path)
 	if err != nil {
 		return err
 	}
@@ -113,7 +118,7 @@ func getBucketID(UID string) ([]int, error) {
 	return buckets, nil
 }
 
-func getFavList(UID string, BID int) ([]int, error) {
+func getFavList(UID string, BID int, db *model.DB) ([]int, error) {
 	rootURL, err := url.Parse("http://space.bilibili.com/ajax/fav/getList?")
 	if err != nil {
 		return nil, err
@@ -142,25 +147,47 @@ func getFavList(UID string, BID int) ([]int, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	if db != nil {
+		avmap := make(map[int]string)
+		avmaps := make([]map[int]string, 0)
+		for _, v := range favlist.Data.Vlist {
+			avinfo, err := json.Marshal(v)
+			if err != nil {
+				log.Fatal(err)
+			}
+			avmap[v.AID] = string(avinfo)
+			avmaps = append(avmaps, avmap)
+		}
+		db.PutAv2db("avs", avmaps)
+	}
+
 	avs := []int{}
 	for _, v := range favlist.Data.Vlist {
+
 		avs = append(avs, v.AID)
 	}
+
 	return avs, nil
 }
 
 //Run run the whole program
 func (fav *FavInfo) Run() error {
-	//get bucket
-	var wg sync.WaitGroup
+	db, err := model.OpenBolt()
+	if err != nil {
+		return err
+	}
 
+	db.CreateBucket("avs")
+
+	//get bucket
 	avlists := []int{}
 	binfo, err := getBucketID(strconv.Itoa(fav.Hub.UID))
 	if err != nil {
 		return err
 	}
 	for _, v := range binfo {
-		favlists, er := getFavList(strconv.Itoa(fav.Hub.UID), v)
+		favlists, er := getFavList(strconv.Itoa(fav.Hub.UID), v, db)
 		if er != nil {
 			return err
 		}
@@ -168,12 +195,11 @@ func (fav *FavInfo) Run() error {
 			avlists = append(avlists, avid)
 		}
 	}
-
+	var wg sync.WaitGroup
 	for _, av := range avlists {
 
 		wg.Add(1)
 		go func(vid int) {
-			println(vid)
 			defer wg.Done()
 			err = analyseFavList(strconv.Itoa(vid))
 			if err != nil {

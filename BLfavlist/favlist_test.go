@@ -17,7 +17,7 @@ func TestGetBucketInfo(t *testing.T) {
 func TestGetFavListInfo(t *testing.T) {
 	binfo, _ := getBucketID("11124261")
 	for _, v := range binfo {
-		favlists, err := getFavList("11124261", v)
+		favlists, err := getFavList("11124261", v, nil)
 		if err != nil {
 			t.Error(err)
 		} else {
