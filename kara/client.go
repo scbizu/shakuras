@@ -1,4 +1,4 @@
-package chat
+package kara
 
 import (
 	"errors"

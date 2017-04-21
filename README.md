@@ -1,2 +1,3 @@
-# letschat
-a chatroom  implemented by websocket.
+# shakuras
+
+shakuras is a simple mediahub for yourself!

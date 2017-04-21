@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"log"
 	"model"
 	"net/http"
 	"net/url"
@@ -18,9 +17,7 @@ import (
 
 //FavInfo  read things from yaml
 type FavInfo struct {
-	Hub struct {
-		UID int `yaml:"uid"`
-	} `yaml:"hub"`
+	UID int `yaml:"uid"`
 }
 
 //BucketInfo  read the buckets data
@@ -118,7 +115,7 @@ func getBucketID(UID string) ([]int, error) {
 	return buckets, nil
 }
 
-func getFavList(UID string, BID int, db *model.DB) ([]int, error) {
+func getFavList(UID string, BID int) ([]int, error) {
 	rootURL, err := url.Parse("http://space.bilibili.com/ajax/fav/getList?")
 	if err != nil {
 		return nil, err
@@ -148,24 +145,28 @@ func getFavList(UID string, BID int, db *model.DB) ([]int, error) {
 		return nil, err
 	}
 
-	if db != nil {
-		avmap := make(map[int]string)
-		avmaps := make([]map[int]string, 0)
-		for _, v := range favlist.Data.Vlist {
-			avinfo, err := json.Marshal(v)
-			if err != nil {
-				log.Fatal(err)
-			}
-			avmap[v.AID] = string(avinfo)
-			avmaps = append(avmaps, avmap)
-		}
-		db.PutAv2db("avs", avmaps)
-	}
-
 	avs := []int{}
 	for _, v := range favlist.Data.Vlist {
 
-		avs = append(avs, v.AID)
+		res, err := model.SelectDB("avs", strconv.Itoa(v.AID))
+		if err != nil {
+			return nil, err
+		}
+		if res == nil {
+			println("*****loading av task:" + strconv.Itoa(v.AID) + "****")
+			avinfo, er := json.Marshal(v)
+			if er != nil {
+				return nil, er
+			}
+			avmap := make(map[string]string)
+			avmap[strconv.Itoa(v.AID)] = string(avinfo)
+			err = model.PutAv2db("avs", avmap)
+			if err != nil {
+				return nil, err
+			}
+			avs = append(avs, v.AID)
+		}
+
 	}
 
 	return avs, nil
@@ -173,37 +174,40 @@ func getFavList(UID string, BID int, db *model.DB) ([]int, error) {
 
 //Run run the whole program
 func (fav *FavInfo) Run() error {
-	db, err := model.OpenBolt()
+
+	err := model.CreateBucket("avs")
 	if err != nil {
 		return err
 	}
-
-	db.CreateBucket("avs")
 
 	//get bucket
 	avlists := []int{}
-	binfo, err := getBucketID(strconv.Itoa(fav.Hub.UID))
+	binfo, err := getBucketID(strconv.Itoa(fav.UID))
 	if err != nil {
-		return err
+		panic(err)
 	}
+
 	for _, v := range binfo {
-		favlists, er := getFavList(strconv.Itoa(fav.Hub.UID), v, db)
+		favlists, er := getFavList(strconv.Itoa(fav.UID), v)
 		if er != nil {
-			return err
+			panic(er)
 		}
+
 		for _, avid := range favlists {
 			avlists = append(avlists, avid)
 		}
 	}
+	println("****sync the avid*****")
 	var wg sync.WaitGroup
 	for _, av := range avlists {
 
 		wg.Add(1)
 		go func(vid int) {
+			println("Fetch av:" + strconv.Itoa(vid))
 			defer wg.Done()
 			err = analyseFavList(strconv.Itoa(vid))
 			if err != nil {
-				log.Fatalln(err.Error())
+				panic(err)
 			}
 		}(av)
 	}

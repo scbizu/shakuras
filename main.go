@@ -4,11 +4,11 @@ import (
 	"os"
 
 	"github.com/labstack/echo"
-	"github.com/scbizu/letschat/chat"
+	"github.com/scbizu/shakuras/kara"
 )
 
 func main() {
-	h := chat.NewHub()
+	h := kara.NewHub()
 	go h.Run()
 	e := echo.New()
 
@@ -29,7 +29,7 @@ func main() {
 	})
 
 	e.GET("/ws", func(c echo.Context) error {
-		chat.ServeWs(h, c.Response().Writer(), c.Request())
+		kara.ServeWs(h, c.Response().Writer(), c.Request())
 		return nil
 	})
 

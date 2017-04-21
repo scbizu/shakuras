@@ -1,4 +1,4 @@
-package chat
+package kara
 
 //Hub is the client hub .
 type Hub struct {
