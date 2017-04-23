@@ -1,13 +1,26 @@
 package model
 
 import (
+	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/boltdb/bolt"
 )
 
+type avinfo struct {
+	AID   int      `json:"vid"`
+	Tags  []string `json:"tags"`
+	Title string   `json:"vname"`
+}
+
 //CachePath defines a package global path
 const CachePath = ".avcache"
+
+var (
+	//Bucketname set package-global bucket name
+	Bucketname = "avs"
+)
 
 //CreateBucket  create the bucket
 func CreateBucket(bucketName string) error {
@@ -72,4 +85,73 @@ func SelectDB(bname string, key string) ([]byte, error) {
 		return nil, err
 	}
 	return res, nil
+}
+
+//ChangeType change key of aid to tag
+func ChangeType(dbpath string, bname string) (string, error) {
+	db, err := bolt.Open(dbpath, 0600, &bolt.Options{Timeout: 5 * time.Second})
+	if err != nil {
+		return "", err
+	}
+	defer db.Close()
+	tagsmap := make(map[string][]string)
+	//do a db select
+	err = db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("avs"))
+		if b == nil {
+			b, err = tx.CreateBucketIfNotExists([]byte(Bucketname))
+			if err != nil {
+				panic(err)
+			}
+		}
+		c := b.Cursor()
+		if c != nil {
+			//iterator
+			for k, v := c.First(); k != nil; k, v = c.Next() {
+				info := new(avinfo)
+
+				err = json.Unmarshal(v, info)
+				if err != nil {
+					log.Fatal(err)
+					return err
+				}
+
+				for _, tag := range info.Tags {
+					tagsmap[tag] = append(tagsmap[tag], string(v))
+				}
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return "", err
+	}
+	tagsjson, err := json.Marshal(tagsmap)
+	if err != nil {
+		return "", err
+	}
+	return string(tagsjson), nil
+}
+
+//GetFirstVID always get first vid
+func GetFirstVID(dbpath string) (map[string]string, error) {
+	db, err := bolt.Open(dbpath, 0600, &bolt.Options{Timeout: 5 * time.Second})
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	firstInfo := make(map[string]string)
+	db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(Bucketname))
+		if b == nil {
+			panic("bucket not find")
+		}
+		c := b.Cursor()
+		k, v := c.Last()
+		firstInfo[string(k)] = string(v)
+		return nil
+	})
+	return firstInfo, nil
 }
