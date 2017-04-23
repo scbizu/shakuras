@@ -2,12 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"kara"
 	"model"
 	"net/http"
 	"os"
 
 	"github.com/labstack/echo"
-	"github.com/scbizu/shakuras/kara"
 )
 
 type avinfo struct {
