@@ -1,29 +1,67 @@
 Vue.use(VueMaterial)
+Vue.use(VueRouter)
+
 
 var conn;
 
 var player = document.getElementById("player");
 
+const watch = {
+   template: `<div>tag {{ $route.params.tag }}</div>`
+}
 
-new Vue({
+
+var siderbar = new Vue({
   el:"#sidebar",
   data:{
+    tags:[
 
+    ],
+  },
+  beforeCreate :function(){
+    fetch('/videotags')
+    .then(function(response){
+      response.json().then(function(data){
+        siderbar.tags = data
+      })
+    })
+    .catch(function(e){
+      console.log(e)
+    })
   },
   methods:{
     toggleSidenav:function(){
       this.$refs.leftnav.toggle()
-    }
+    },
+    tagshref : function(tagname){
+      //
+      return "/watch/"+tagname
+    },
+    getSeries:function(tag){
+      fetch('/getSeries?tagname='+tag)
+      .then(function(response){
+        response.json().then(function(data){
+          console.log(data)
+          series.parts = data
+          series.hasContent = true
+        })
+      })
+      // console.log("clicked!")
+      // sideBarRouter.push({path:"/watch/"+tagname})
+    },
   }
 })
 
-new Vue({
+
+
+var series = new Vue({
   el:"#series",
   data:{
+    hasContent: false ,
     parts:[
-      {vid:"0x00",vname:"#愤怒的毒奶"},
-      {vid:"0x01",vname:"#毒奶集锦"},
-      {vid:"0x02",vname:"#不忍直视"}
+      // {vid:"0x00",vname:"#愤怒的毒奶"},
+      // {vid:"0x01",vname:"#毒奶集锦"},
+      // {vid:"0x02",vname:"#不忍直视"}
     ]
   },
   methods:{
@@ -36,14 +74,15 @@ new Vue({
       })
       .then(function(myblob){
         var videoURL = URL.createObjectURL(myblob);
-        if(flvjs.isSupported()){
-          var flvrsc = flvjs.createPlayer({
-            type:'flv',
-            url:videoURL,
-          });
-          flvrsc.attachMediaElement(player);
-          flvrsc.load();
-        }
+        // if(flvjs.isSupported()){
+        //   var flvrsc = flvjs.createPlayer({
+        //     type:'flv',
+        //     url:videoURL,
+        //   });
+        //   flvrsc.attachMediaElement(player);
+        //   flvrsc.load();
+        // }
+        player.src = videoURL
       });
       // console.log(vid)
     }
@@ -122,29 +161,29 @@ noUiSlider.create(document.getElementById("slider"),{
 //fetch rsc
 var vsrc = document.querySelector('video');
 
-fetch('/video?vid=0x00')
+fetch('/firstvideo')
 .then(function(res){
   return res.blob();
 })
 .then(function(myblob){
 
   var videoURL = URL.createObjectURL(myblob);
-  // vsrc.src = videoURL ;
-  if(flvjs.isSupported()){
-    var flvrsc = flvjs.createPlayer({
-      type:'flv',
-      url:videoURL,
-    });
-    flvrsc.attachMediaElement(player);
-    flvrsc.load();
-  }
+  // if(flvjs.isSupported()){
+  //   var flvrsc = flvjs.createPlayer({
+  //     type:'flv',
+  //     url: videoURL,
+  //   });
+  //   flvrsc.attachMediaElement(player);
+  //   flvrsc.load();
+  // }
+  player.src = videoURL
 });
+
 
 
 setInterval(function(){
   if (player.currentTime <= player.duration){
-    //when downloading ....
-    chats.ldProgress = player.buffered.end(0);
+    chats.ldProgress = player.buffered.end(0)/player.duration * 100;
 
     var slider = document.getElementById("slider");
     slider.noUiSlider.on('change',function(){

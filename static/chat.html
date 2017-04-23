@@ -26,12 +26,14 @@
             </md-toolbar> -->
             <md-list>
               <md-subheader>导航</md-subheader>
-              <a class="md-button sidenavlist" href="#">
+              <a class="md-button sidenavlist" >
                 <md-list-item md-inset>
                   <md-icon>movie</md-icon> <span>视频</span>
                   <md-list-expand>
                     <!-- loop video rsc in db -->
-                      <md-list-item class="md-inset">#谐星语录</md-list-item>
+
+                      <md-list-item v-for="tag in tags"  @click.native="getSeries(tag)" class="md-inset" >{{tag}}</md-list-item>
+
                   </md-list-expand>
                 </md-list-item>
               </a>
@@ -103,16 +105,18 @@
 
       </div>
 
-      <div class="series" id="series">
-          <h4>剧集</h4>
-          <md-button-toggle md-single>
-            <md-button v-for="part in parts" @click.native="switchPart(part.vid)">{{part.vname}}</md-button>&nbsp;&nbsp;&nbsp;&nbsp;
-          </md-button-toggle>
-      </div>
+        <div  class="series" id="series">
+            <template v-if="hasContent">
+              <h4>剧集</h4>
+              <md-button-toggle md-single>
+                <md-button v-for="part in parts" @click.native="switchPart(part.aid)">{{part.title}}</md-button>&nbsp;&nbsp;&nbsp;&nbsp;
+              </md-button-toggle>
+            </template>
+        </div>
 
       <div class="about" id="about">
         <h4>关于</h4>
-        <p>视频搬运自 <a href="http://space.bilibili.com/9717562/">@星际老男孩</a></p>
+        <p>视频搬运自 <a href="http://www.bilibili.com/">@bilibili</a></p>
       </div>
       <script src="./js/flv.min.js"></script>
       <script src="./js/nouislider.min.js"></script>
