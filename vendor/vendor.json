@@ -41,6 +41,36 @@
 			"revisionTime": "2016-08-06T12:27:52Z"
 		},
 		{
+			"checksumSHA1": "LbeeDLEuY05jkCjv8EfvwIKK+qI=",
+			"path": "github.com/nareix/bits",
+			"revision": "1f3e16538b2591eae3c20c7863a5123dad67e6f4",
+			"revisionTime": "2016-07-29T15:27:11Z"
+		},
+		{
+			"checksumSHA1": "FCwp70dnuEeT5l2oQavaW9DXd6U=",
+			"path": "github.com/nareix/joy4",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "J5SDbswm9utRQVvnaa0DdlWgFRo=",
+			"path": "github.com/nareix/joy4/av",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "nOS4lYtxCt4oUdFhFPiBqEpQvNY=",
+			"path": "github.com/nareix/joy4/codec",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "BEjcZS0BTGyI/jAoq43p9XWXvNI=",
+			"path": "github.com/nareix/joy4/format",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
 			"checksumSHA1": "zpMY8GV87XcVreieKzdxxx4smQA=",
 			"path": "github.com/scbizu/letschat/chat",
 			"revision": "71985af40a900efc55b64b3b6e26586adf973ae8",
@@ -73,5 +103,5 @@
 			"revisionTime": "2017-04-07T17:21:22Z"
 		}
 	],
-	"rootPath": "github.com/scbizu/letschat"
+	"rootPath": "Project/shakuras"
 }

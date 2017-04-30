@@ -1,0 +1,125 @@
+<!DOCTYPE>
+<html>
+  <head>
+      <meta charset="utf-8"></meta>
+      <title>nace的PY后宫</title>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+      <link rel="stylesheet" href="https://unpkg.com/vue-material@0.7.1/dist/vue-material.css">
+      <link rel="stylesheet" href="./css/chat.css"></link>
+      <link rel="stylesheet" href="./css/player.css"></link>
+  </head>
+  <body>
+    <div id="main">
+      <!-- topic chat-->
+      <div  id="sidebar">
+
+          <md-button class="md-fab md-primary" @click.native="toggleSidenav">
+              <md-icon>map</md-icon>
+          </md-button>
+          <md-sidenav class="md-left" ref="leftnav" >
+            <!-- <md-toolbar class="md-large">
+                <div class="md-toolbar-container">
+                  <h3 class="md-title">Sidenav content</h3>
+                </div>
+            </md-toolbar> -->
+            <md-list>
+              <md-subheader>导航</md-subheader>
+              <a class="md-button sidenavlist" >
+                <md-list-item md-inset>
+                  <md-icon>movie</md-icon> <span>视频</span>
+                  <md-list-expand>
+                    <!-- loop video rsc in db -->
+
+                      <md-list-item v-for="tag in tags" href="/" @click.native="getSeries(tag)" class="md-inset" >{{tag}}</md-list-item>
+
+                  </md-list-expand>
+                </md-list-item>
+              </a>
+              <a class="md-button sidenavlist" href="#">
+                <md-list-item md-inset>
+                  <md-icon>live_tv</md-icon> <span>直播</span>
+                  <md-list-expand>
+                      <!-- <md-list-item class="md-inset">#弹幕点歌机</md-list-item> -->
+                      <md-list-item class="md-inset">#视频轮播</md-list-item>
+                      <md-list-item href="/live" class="md-inset">#Nace鸽王直播</md-list-item>
+                  </md-list-expand>
+                </md-list-item>
+              </a>
+              <a class="md-button sidenavlist" href="#">
+                <md-list-item md-inset>
+                  <md-icon>sentiment_very_satisfied</md-icon> <span>关于</span>
+                </md-list-item>
+              </a>
+          </md-sidenav>
+      </div>
+
+      <div id="screen">
+          <!-- media window -->
+              <div id="media">
+                <video id="player" width="100%"  preload="auto">
+                </video>
+                <div class="progressor">
+                  <md-progress :md-progress="ldProgress"></md-progress>
+                  <div id="slider"></div>
+                </div>
+                <div id="controlbar">
+                  <!-- Start/Pause -->
+
+                    <!-- Input form -->
+                    <div id="inputbar">
+                      <md-input-container>
+                        <md-input v-model="msg" type="text" placeholder="吐槽模式 启动！"></md-input>
+                        <md-button class="md-icon-button" @click.native="send">
+                          <md-icon>send</md-icon>
+                        </md-button>
+                      </md-input-container>
+                    </div>
+                    <div style="display:inline-flex;width:20%">
+                      <md-input-container >
+                             <md-select class="qa" name="qa" id="qa" v-model="qa">
+                               <md-option value="raw">原画</md-option>
+                               <md-option value="low">普清</md-option>
+                             </md-select>
+                      </md-input-container>
+                    </div>
+                    <!-- fullScreen -->
+                    <div style="display:inline-flex;"><md-button class="md-icon-button" style="width:100%;" @click.native="fullScreen"><md-icon>zoom_out_map</md-icon></md-button></div>
+
+                </div>
+
+              </div>
+              <!-- chatscreen -->
+                  <div id="chatscreen">
+                    <p>
+                      > Nace:剧透一时爽,嘿嘿嘿嘿嘿 (￣_,￣ =)>
+                    </p>
+                    <hr>
+                        <p v-for="(content, index) in contents">
+                          {{content}}
+                        </p>
+
+                  </div>
+
+      </div>
+
+        <!-- <div  class="series" id="series">
+            <template v-if="hasContent">
+              <h4>剧集</h4>
+              <md-button-toggle md-single>
+                <md-button v-for="part in parts" @click.native="switchPart(part.aid)">{{part.title}}</md-button>&nbsp;&nbsp;&nbsp;&nbsp;
+              </md-button-toggle>
+            </template>
+        </div> -->
+
+      <!-- <div class="about" id="about">
+        <h4>关于</h4>
+        <p>视频搬运自 <a href="http://www.bilibili.com/">@bilibili</a></p>
+      </div> -->
+      <script src="./js/flv.min.js"></script>
+      <script src="https://unpkg.com/vue@2.1.10/dist/vue.js"></script>
+      <script src="https://unpkg.com/vue-material@0.7.1"></script>
+      <script src="./js/live.js"></script>
+      <script src="./js/player.js"></script>
+  </body>
+</html>
