@@ -41,9 +41,9 @@
                 <md-list-item md-inset>
                   <md-icon>live_tv</md-icon> <span>直播</span>
                   <md-list-expand>
-                      <md-list-item class="md-inset">#弹幕点歌机</md-list-item>
+                      <!-- <md-list-item class="md-inset">#弹幕点歌机</md-list-item> -->
                       <md-list-item class="md-inset">#视频轮播</md-list-item>
-                      <md-list-item class="md-inset">#Nace鸽王直播</md-list-item>
+                      <md-list-item href="/live" class="md-inset">#Nace鸽王直播</md-list-item>
                   </md-list-expand>
                 </md-list-item>
               </a>
@@ -71,9 +71,9 @@
                     <div id="inputbar">
                       <md-input-container>
                         <md-input v-model="msg" type="text" placeholder="吐槽模式 启动！"></md-input>
-                        <!-- <md-button class="md-icon-button" @click.native="send">
+                        <md-button class="md-icon-button" @click.native="send">
                           <md-icon>send</md-icon>
-                        </md-button> -->
+                        </md-button>
                       </md-input-container>
                     </div>
                     <div style="display:inline-flex;width:20%">

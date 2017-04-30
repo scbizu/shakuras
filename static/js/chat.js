@@ -1,5 +1,5 @@
 Vue.use(VueMaterial)
-Vue.use(VueRouter)
+
 
 
 var conn;
