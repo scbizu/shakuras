@@ -75,11 +75,19 @@
                         </md-button>
                       </md-input-container>
                     </div>
-                    <div style="display:inline-flex;width:20%">
+                    <div style="display:inline-flex;width:10%">
                       <md-input-container >
                              <md-select class="qa" name="qa" id="qa" v-model="qa">
                                <md-option value="raw">原画</md-option>
                                <md-option value="low">普清</md-option>
+                             </md-select>
+                      </md-input-container>
+                    </div>
+                    <div style="display:inline-flex;width:10%">
+                      <md-input-container >
+                             <md-select class="line" name="line" id="line" v-model="line">
+                               <md-option value="line0" @selected="switchline('line0')">线路0</md-option>
+                               <md-option value="line1" @selected="switchline('line1')">线路1</md-option>
                              </md-select>
                       </md-input-container>
                     </div>
