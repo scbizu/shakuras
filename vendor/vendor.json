@@ -47,6 +47,12 @@
 			"revisionTime": "2016-07-29T15:27:11Z"
 		},
 		{
+			"checksumSHA1": "MvHhNqcz8pYFaPMxFQ0cnGz1iKY=",
+			"path": "github.com/nareix/bits/pio",
+			"revision": "1f3e16538b2591eae3c20c7863a5123dad67e6f4",
+			"revisionTime": "2016-07-29T15:27:11Z"
+		},
+		{
 			"checksumSHA1": "FCwp70dnuEeT5l2oQavaW9DXd6U=",
 			"path": "github.com/nareix/joy4",
 			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
@@ -59,14 +65,104 @@
 			"revisionTime": "2017-01-10T05:08:03Z"
 		},
 		{
+			"checksumSHA1": "XU2nIfNxEYHBVPqmBpLNP+wO28U=",
+			"path": "github.com/nareix/joy4/av/avutil",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "151wCcy8Dof0UVclYippSw31ckg=",
+			"path": "github.com/nareix/joy4/av/pktque",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "xVf32xjvqpqKdx9rFuRVvHxBTbI=",
+			"path": "github.com/nareix/joy4/av/pubsub",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "PhbhzHfK6jvxdDXeeAcUpHoh/4s=",
+			"path": "github.com/nareix/joy4/av/transcode",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
 			"checksumSHA1": "nOS4lYtxCt4oUdFhFPiBqEpQvNY=",
 			"path": "github.com/nareix/joy4/codec",
 			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
 			"revisionTime": "2017-01-10T05:08:03Z"
 		},
 		{
+			"checksumSHA1": "dTCQqN0kqnfrcU8+rRuJj3Smj4Y=",
+			"path": "github.com/nareix/joy4/codec/aacparser",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "5BEO3m/43j4b8/RHQaNbzJIt1sQ=",
+			"path": "github.com/nareix/joy4/codec/fake",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "S/rx69+JJD2WgovhMrc7qorrP4k=",
+			"path": "github.com/nareix/joy4/codec/h264parser",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
 			"checksumSHA1": "BEjcZS0BTGyI/jAoq43p9XWXvNI=",
 			"path": "github.com/nareix/joy4/format",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "FDKtqEZVwUeY0fCCSZrBIyGsOcQ=",
+			"path": "github.com/nareix/joy4/format/aac",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "fSruUZp+KFZ1u+xTK8tdFARU2XM=",
+			"path": "github.com/nareix/joy4/format/flv",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "5FlTfxQaOg2xBb2P3XluMB3wUdo=",
+			"path": "github.com/nareix/joy4/format/flv/flvio",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "WjPoA3YquZ06tNxLftbwOkiHdOU=",
+			"path": "github.com/nareix/joy4/format/mp4",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "Qw6xjGd41ehrfw9IbbEe4zFTa2s=",
+			"path": "github.com/nareix/joy4/format/rtmp",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "nmCqhpvY7zVskvEsoiDKILehad8=",
+			"path": "github.com/nareix/joy4/format/rtsp",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "jx7gWN3Mng0XTU+30G0nQuoplCY=",
+			"path": "github.com/nareix/joy4/format/rtsp/sdp",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "jqaMohZrItsWOu/nu4HrNmGG4No=",
+			"path": "github.com/nareix/joy4/format/ts",
 			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
 			"revisionTime": "2017-01-10T05:08:03Z"
 		},
