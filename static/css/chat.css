@@ -55,6 +55,11 @@
     background-color: rgba(33, 150, 243, .38);
 }
 
+.md-select{
+  width: 100%;
+  height: 32px;
+  position: relative;
+}
 #inputbar{
   padding-top: 0px;
   width: 57%;
@@ -83,6 +88,11 @@
 }
 
 .qa{
+
+    min-width: 0;
+}
+
+.line{
 
     min-width: 0;
 }

@@ -103,7 +103,7 @@ var chats = new Vue({
       ],
       ldProgress: 0,
       msg:"",
-      qa: "middle",
+      qa: "raw",
       isplay:false,
   },
 
