@@ -2,14 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"kara"
 	"model"
 	"net/http"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/labstack/echo"
+	"github.com/nareix/joy4/av"
 	"github.com/nareix/joy4/av/avutil"
 	"github.com/nareix/joy4/av/pubsub"
 	"github.com/nareix/joy4/format"
@@ -45,6 +48,64 @@ func init() {
 func (w writeFlusher) Flush() error {
 	w.httpflusher.Flush()
 	return nil
+}
+
+//FrameDropper ...
+type FrameDropper struct {
+	Interval     int
+	n            int
+	skipping     bool
+	DelaySkip    time.Duration
+	lasttime     time.Time
+	lastpkttime  time.Duration
+	delay        time.Duration
+	SkipInterval int
+}
+
+//ModifyPacket implement the  ModifyPacket interface
+func (fp *FrameDropper) ModifyPacket(pkt *av.Packet, streams []av.CodecData, videoidx int, audioidx int) (drop bool, err error) {
+	if fp.DelaySkip != 0 && pkt.Idx == int8(videoidx) {
+		now := time.Now()
+		if !fp.lasttime.IsZero() {
+			realdiff := now.Sub(fp.lasttime)
+			pktdiff := pkt.Time - fp.lastpkttime
+			fp.delay += realdiff - pktdiff
+		}
+		fp.lasttime = time.Now()
+		fp.lastpkttime = pkt.Time
+
+		if !fp.skipping {
+			if fp.delay > fp.DelaySkip {
+				fp.skipping = true
+				fp.delay = 0
+			}
+		} else {
+			if pkt.IsKeyFrame {
+				fp.skipping = false
+			}
+		}
+		if fp.skipping {
+			drop = true
+		}
+
+		if fp.SkipInterval != 0 && pkt.IsKeyFrame {
+			if fp.n == fp.SkipInterval {
+				fp.n = 0
+				fp.skipping = true
+			}
+			fp.n++
+		}
+	}
+
+	if fp.Interval != 0 {
+		if fp.n >= fp.Interval && pkt.Idx == int8(videoidx) && !pkt.IsKeyFrame {
+			drop = true
+			fp.n = 0
+		}
+		fp.n++
+	}
+
+	return
 }
 
 func main() {
@@ -109,7 +170,15 @@ func main() {
 
 			muxer := flv.NewMuxerWriteFlusher(writeFlusher{httpflusher: flusher, Writer: w})
 			cursor := ch.que.Latest()
-
+			query := r.URL.Query()
+			if q := query.Get("delaygop"); q != "" {
+				n := 0
+				fmt.Sscanf(q, "%d", &n)
+				cursor = ch.que.DelayedGopCount(n)
+			} else if q := query.Get("delaytime"); q != "" {
+				dur, _ := time.ParseDuration(q)
+				cursor = ch.que.DelayedTime(dur)
+			}
 			avutil.CopyFile(muxer, cursor)
 		} else {
 			http.NotFound(w, r)
