@@ -143,6 +143,12 @@
 			"revisionTime": "2017-01-10T05:08:03Z"
 		},
 		{
+			"checksumSHA1": "vG4KqXkMHNoUKMCYWD9+asH6c7k=",
+			"path": "github.com/nareix/joy4/format/mp4/mp4io",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
 			"checksumSHA1": "Qw6xjGd41ehrfw9IbbEe4zFTa2s=",
 			"path": "github.com/nareix/joy4/format/rtmp",
 			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
@@ -163,6 +169,12 @@
 		{
 			"checksumSHA1": "jqaMohZrItsWOu/nu4HrNmGG4No=",
 			"path": "github.com/nareix/joy4/format/ts",
+			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
+			"revisionTime": "2017-01-10T05:08:03Z"
+		},
+		{
+			"checksumSHA1": "tE2YEWRwkvcKkEzl3/dRhLbCKyc=",
+			"path": "github.com/nareix/joy4/format/ts/tsio",
 			"revision": "4b82a8ce74da26f4faed9cdc796385f069eb031f",
 			"revisionTime": "2017-01-10T05:08:03Z"
 		},
