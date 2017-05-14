@@ -16,6 +16,14 @@
   /*background-color: black;*/
   top:20vh;
 }
+
+.account{
+  float: right;
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+}
+
 .progressor {
 
 }

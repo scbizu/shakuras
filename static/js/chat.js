@@ -9,7 +9,8 @@ var player = document.getElementById("player");
 const watch = {
    template: `<div>tag {{ $route.params.tag }}</div>`
 }
-
+//heiheihei
+var user ="Alien"
 
 var siderbar = new Vue({
   el:"#sidebar",
@@ -140,12 +141,91 @@ var chats = new Vue({
         if(!this.msg) {
           console.error("plz input sth..")
         }
-        conn.send(this.msg);
+        conn.send(user+" :" + this.msg);
         this.msg ="";
     }
   },
 })
 ;
+
+var account = new Vue({
+  el:"#account",
+  data:{
+    username:"",
+    password:"",
+    registClicked:false,
+    loginClicked:false,
+    vertical:"bottom",
+    horizontal:"center",
+    duration:2000,
+    StatusOk:false,
+    StatusInfo:"Failed",
+    unlogin:true
+  },
+  methods:{
+    login :function(){
+      this.loginClicked = true
+      var payload = {
+        username: this.username,
+        password: this.password
+      }
+      var data = new FormValue{}
+      data.append("json",JSON.stringify(payload))
+      fetch("/login",{
+        method: "POST",
+        headers:{
+          "Content-Type":"application/x-www-form-urlencoded"
+        },
+        body: data
+      })
+      .then(function(res){
+        if (res.status == 200){
+             user = this.username
+             unlogin = false
+        } else{
+          res.json().then(function(data){
+            console.log(data)
+            this.$refs.snackbar.open();
+          })
+        }
+        this.loginClicked = false
+      })
+    },
+
+    regist: function(){
+        this.registClicked = true
+        var payload = {
+          username: this.username,
+          password: this.password
+        }
+        var data = new FormValue{}
+        data.append("json",JSON.stringify(payload))
+        fetch('/regist',{
+          method: "PUT",
+          headers: {
+            "Content-Type":"application/x-www-form-urlencoded"
+          },
+          body: data
+        })
+        .then(function(res){
+          if (res.status== 200) {
+            res.json().then(function(data){
+                this.StatusOk = true
+                this.StatusInfo = "Success"
+                console.log(data)
+            })
+          }else{
+            res.json().then(function(data){
+                  console.log(data)
+                  this.$refs.snackbar.open();
+            })
+          }
+          this.registClicked = false
+          this.$refs.snackbar.open();
+        })
+    }
+  }
+})
 
 noUiSlider.create(document.getElementById("slider"),{
   start:0,

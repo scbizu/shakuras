@@ -8,12 +8,14 @@ import (
 	"model"
 	"net/http"
 	"os"
+	"os/exec"
 	"sync"
 	"time"
 
 	"github.com/labstack/echo"
 	"github.com/nareix/joy4/av"
 	"github.com/nareix/joy4/av/avutil"
+	"github.com/nareix/joy4/av/pktque"
 	"github.com/nareix/joy4/av/pubsub"
 	"github.com/nareix/joy4/format"
 	"github.com/nareix/joy4/format/flv"
@@ -36,6 +38,18 @@ type writeFlusher struct {
 	io.Writer
 }
 
+//FrameDropper defines the drop frame
+type FrameDropper struct {
+	Interval     int
+	n            int
+	skipping     bool
+	DelaySkip    time.Duration
+	lasttime     time.Time
+	lastpkttime  time.Duration
+	delay        time.Duration
+	SkipInterval int
+}
+
 var (
 	cachepath = "./zealot/.avcache"
 	videopath = "./static/video/"
@@ -48,18 +62,6 @@ func init() {
 func (w writeFlusher) Flush() error {
 	w.httpflusher.Flush()
 	return nil
-}
-
-//FrameDropper ...
-type FrameDropper struct {
-	Interval     int
-	n            int
-	skipping     bool
-	DelaySkip    time.Duration
-	lasttime     time.Time
-	lastpkttime  time.Duration
-	delay        time.Duration
-	SkipInterval int
 }
 
 //ModifyPacket implement the  ModifyPacket interface
@@ -108,6 +110,12 @@ func (fp *FrameDropper) ModifyPacket(pkt *av.Packet, streams []av.CodecData, vid
 	return
 }
 
+//forwardviaFFmpeg will forward the rtmp address to another address
+//need ffmpeg plugin
+func forwardviaFFmpeg(src string, dst string) {
+	exec.Command("ffmpeg", "-re", "-i", src, "-acodec", "libfaac", "-ab", "128k", "-vcodec", "libx264", "-s", "640x360", "-b:v", "500k", "-preset", "medium", "-vprofile", "baseline", "-r", "25 ", "-f", "flv", dst)
+}
+
 func main() {
 	//WS server
 	h := kara.NewHub()
@@ -131,6 +139,7 @@ func main() {
 	//HandlePublish
 	s.HandlePublish = func(conn *rtmp.Conn) {
 		streams, _ := conn.Streams()
+
 		mutex.Lock()
 		ch := channels[conn.URL.Path]
 		if ch != nil {
@@ -156,6 +165,10 @@ func main() {
 	go s.ListenAndServe()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		//fork
+		forwardviaFFmpeg("rtmp://localhost/test", "rtmp://localhost/md")
+		//fork
+		forwardviaFFmpeg("rtmp://localhost/test", "rtmp://localhost/md2")
 		mutex.RLock()
 		ch := channels[r.URL.Path]
 		mutex.RUnlock()
@@ -170,6 +183,11 @@ func main() {
 
 			muxer := flv.NewMuxerWriteFlusher(writeFlusher{httpflusher: flusher, Writer: w})
 			cursor := ch.que.Latest()
+			streams, err := cursor.Streams()
+			if err != nil {
+				panic(err)
+			}
+
 			query := r.URL.Query()
 			if q := query.Get("delaygop"); q != "" {
 				n := 0
@@ -179,7 +197,42 @@ func main() {
 				dur, _ := time.ParseDuration(q)
 				cursor = ch.que.DelayedTime(dur)
 			}
-			avutil.CopyFile(muxer, cursor)
+
+			filters := pktque.Filters{}
+
+			if q := query.Get("waitkey"); q != "" {
+				filters = append(filters, &pktque.WaitKeyFrame{})
+			}
+
+			filters = append(filters, &pktque.FixTime{StartFromZero: true, MakeIncrement: true})
+
+			if q := query.Get("framedrop"); q != "" {
+				n := 0
+				fmt.Sscanf(q, "%d", &n)
+				filters = append(filters, &FrameDropper{Interval: n})
+			}
+
+			if q := query.Get("delayskip"); q != "" {
+				dur, _ := time.ParseDuration(q)
+				skipper := &FrameDropper{DelaySkip: dur}
+				if q := query.Get("skipinterval"); q != "" {
+					n := 0
+					fmt.Sscanf(q, "%d", &n)
+					skipper.SkipInterval = n
+				}
+				filters = append(filters, skipper)
+			}
+
+			demuxer := &pktque.FilterDemuxer{
+				Filter:  filters,
+				Demuxer: cursor,
+			}
+
+			muxer.WriteHeader(streams)
+			avutil.CopyPackets(muxer, demuxer)
+			muxer.WriteTrailer()
+			// avutil.CopyFile(muxer, cursor)
+
 		} else {
 			http.NotFound(w, r)
 		}
@@ -272,6 +325,79 @@ func main() {
 		return c.Stream(http.StatusOK, "video/mp4", video)
 	})
 
+	e.PUT("/regist", func(c echo.Context) error {
+		username := c.FormValue("username")
+		pwd := c.FormValue("password")
+		if username == "" || pwd == "" {
+			return c.JSON(http.StatusBadRequest, "bad request")
+		}
+		uhash := md5hash(username)
+		userInfo := struct {
+			Username string `json:"username"`
+			Password string `json:"password"`
+		}{
+			username,
+			pwd,
+		}
+		userInfoJSON, err := json.Marshal(userInfo)
+		if err != nil {
+			c.JSON(http.StatusBadGateway, err.Error())
+		}
+		//check username if not exist
+		model.DefaultCachePath = ".usercache"
+		err = model.CreateBucket("userinfo")
+		if err != nil {
+			return c.JSON(http.StatusBadGateway, err.Error())
+		}
+		uinfo, err := model.SelectDB("userinfo", uhash)
+		if err != nil {
+			return c.JSON(http.StatusBadGateway, err.Error())
+		}
+		if uinfo == nil {
+			err = model.InsertDB("userinfo", uhash, string(userInfoJSON))
+			if err != nil {
+				return c.JSON(http.StatusBadGateway, err.Error())
+			}
+			return c.JSON(http.StatusOK, "success")
+		}
+		return c.JSON(http.StatusUnprocessableEntity, "duplicate username")
+	})
+
+	e.POST("/login", func(c echo.Context) error {
+		username := c.FormValue("username")
+		password := c.FormValue("password")
+		if username == "" || password == "" {
+			return c.JSON(http.StatusBadRequest, "Bad Request")
+		}
+		uhash := md5hash(username)
+		model.DefaultCachePath = ".usercache"
+		err := model.CreateBucket("userinfo")
+		if err != nil {
+			return c.JSON(http.StatusServiceUnavailable, err.Error())
+		}
+		uinfo, err := model.SelectDB("userinfo", uhash)
+		if err != nil {
+			return c.JSON(http.StatusServiceUnavailable, err.Error())
+		}
+		if uinfo == nil {
+			return c.JSON(http.StatusBadRequest, "no such user")
+		}
+		realInfo := make(map[string]string)
+		err = json.Unmarshal(uinfo, &realInfo)
+		if err != nil {
+			return c.JSON(http.StatusServiceUnavailable, err.Error())
+		}
+		realPassword := realInfo["password"]
+		if password == realPassword {
+			cookie := new(http.Cookie)
+			cookie.Name = "username"
+			cookie.Value = username
+			cookie.Expires = time.Now().Add(time.Hour * 12)
+			c.SetCookie(cookie)
+			return c.JSON(http.StatusOK, "OK")
+		}
+		return c.JSON(http.StatusBadRequest, "password not correct")
+	})
 	// e.GET("/v", func(c echo.Context) error {
 	// 	mutex.RLock()
 	// 	ch := channels[c.Request().URL.Path]

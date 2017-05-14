@@ -14,17 +14,16 @@ type avinfo struct {
 	Title string   `json:"vname"`
 }
 
-//CachePath defines a package global path
-const CachePath = ".avcache"
-
 var (
 	//Bucketname set package-global bucket name
 	Bucketname = "avs"
+	//DefaultCachePath defines a package global path
+	DefaultCachePath = ".avcache"
 )
 
 //CreateBucket  create the bucket
 func CreateBucket(bucketName string) error {
-	db, err := bolt.Open(CachePath, 0600, nil)
+	db, err := bolt.Open(DefaultCachePath, 0600, nil)
 	if err != nil {
 		return err
 	}
@@ -70,7 +69,7 @@ func PutAv2db(bname string, src map[string]string) error {
 //SelectDB Select the k-v
 func SelectDB(bname string, key string) ([]byte, error) {
 	var res []byte
-	db, err := bolt.Open(CachePath, 0600, nil)
+	db, err := bolt.Open(DefaultCachePath, 0600, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -85,6 +84,28 @@ func SelectDB(bname string, key string) ([]byte, error) {
 		return nil, err
 	}
 	return res, nil
+}
+
+//InsertDB insert data
+func InsertDB(bname string, key string, value string) error {
+	db, err := bolt.Open(DefaultCachePath, 0666, nil)
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+	err = db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(bname))
+
+		b.Put([]byte(key), []byte(value))
+
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
 
 //ChangeType change key of aid to tag

@@ -105,8 +105,6 @@ var chats = new Vue({
          SURL = "http://localhost:8091/test"
        }
 
-
-
        if (linenum!=""){
 
         var vsrc = document.querySelector('video');
@@ -130,7 +128,40 @@ var chats = new Vue({
        }
        console.log("Clicked");
     },
-  },
+
+    switchresolution: function(quality){
+      console.log(quality)
+      var SURL ;
+      if (quality == "raw"){
+        SURL = "http://localhost:8091/test";
+      }else if (quality == "md"){
+        SURL = "http://localhost:8091/md";
+      }
+
+      if (quality!=""){
+
+       var vsrc = document.querySelector('video');
+           console.log(flvPlayer)
+           if (flvPlayer != null) {
+             flvPlayer.unload();
+             flvPlayer.detachMediaElement();
+             flvPlayer.destroy();
+             flvPlayer = null;
+             console.log("destroyed")
+           }
+
+      flvPlayer = flvjs.createPlayer({
+            isLive: true,
+            type: 'flv',
+            url: SURL,
+        });
+        flvPlayer.attachMediaElement(vsrc);
+        flvPlayer.load();
+        flvPlayer.play();
+      }
+      console.log("Clicked");
+   },
+ },
 });
 
 
