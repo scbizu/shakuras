@@ -151,10 +151,11 @@ func getFavList(UID string, BID int) ([]int, error) {
 	avs := []int{}
 	for _, v := range favlist.Data.Vlist {
 
-		res, err := model.SelectDB(model.Bucketname, strconv.Itoa(v.VID))
+		res, db, err := model.SelectDB(model.Bucketname, strconv.Itoa(v.VID))
 		if err != nil {
 			return nil, err
 		}
+		defer db.Close()
 		if res == nil {
 			println("*****loading av task:" + strconv.Itoa(v.VID) + "****")
 			avinfo, er := json.Marshal(v)
