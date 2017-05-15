@@ -67,23 +67,24 @@ func PutAv2db(bname string, src map[string]string) error {
 }
 
 //SelectDB Select the k-v
-func SelectDB(bname string, key string) ([]byte, error) {
+func SelectDB(bname string, key string) ([]byte, *bolt.DB, error) {
 	var res []byte
 	db, err := bolt.Open(DefaultCachePath, 0600, nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	defer db.Close()
+
 	res = []byte("")
 	err = db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(bname))
 		res = b.Get([]byte(key))
+		// println(string(res))
 		return nil
 	})
 	if err != nil {
-		return nil, err
+		return nil, db, err
 	}
-	return res, nil
+	return res, db, nil
 }
 
 //InsertDB insert data

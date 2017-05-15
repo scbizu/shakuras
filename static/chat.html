@@ -119,36 +119,22 @@
       </div>
 
   <md-menu class="account" id="account" md-size="7" md-direction="top left" md-size="4">
-          <md-button class="md-fab md-primary"  md-menu-trigger>
+          <md-button class="md-fab md-primary" @click.native="auth" md-menu-trigger>
             <md-icon>account_box</md-icon>
           </md-button>
-
           <md-menu-content>
-
             <div v-if="unlogin" class="accountInfo">
-              <!-- <blockquote>Note:目前仅限学生账号,密码登陆</blockquote> -->
               <md-input-container md-inline>
                 <label>User</label>
                 <md-input v-model="username" type="text"></md-input>
               </md-input-container>
-
               <md-input-container md-has-password md-inline>
                 <label>Password</label>
                 <md-input v-model="password" type="password"></md-input>
               </md-input-container>
-
-              <!-- <md-input-container md-has-password md-inline>
-                <label>CheckCode</label>
-                <md-input type="text"></md-input>
-                <span>
-                    <img class="checkcode" src="">
-                </span>
-              </md-input-container> -->
             <md-button class="md-primary" v-if="!loginClicked" @click.native="login">登录</md-button>
-            <md-button class="md-primary" v-if="loginClicked" disabled><md-spinner md-indeterminate></md-spinner></md-button>
             <span>
             <md-button class="md-primary" v-if="!registClicked" @click.native="regist">注册</md-button>
-            <md-button class="md-primary" v-if="registClicked" disabled><md-spinner md-indeterminate></md-spinner></md-button>
             </span>
             <md-snackbar :md-position="vertical + ' ' + horizontal" ref="snackbar" :md-duration="duration">
               <span v-if="StatusOk">{{StatusInfo}}</span>
@@ -157,9 +143,9 @@
           </div>
           <div v-if="!unlogin" class="userinfo">
               <md-avatar class="md-large">
-                  <img src="images/avatar.jpg" alt="avatar">
+                  <img src="images/avatar.png" alt="avatar">
               </md-avatar>
-              <span>{{username}}</span>
+              <span>Hi,{{username}}.欢迎加入Nace的放映室😝</span>
           </div>
           </md-menu-content>
   </md-menu>

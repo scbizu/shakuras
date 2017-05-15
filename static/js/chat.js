@@ -6,11 +6,15 @@ var conn;
 
 var player = document.getElementById("player");
 
-const watch = {
-   template: `<div>tag {{ $route.params.tag }}</div>`
-}
 //heiheihei
 var user ="Alien"
+
+
+function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length == 2) return parts.pop().split(";").shift();
+}
 
 var siderbar = new Vue({
   el:"#sidebar",
@@ -163,65 +167,73 @@ var account = new Vue({
     unlogin:true
   },
   methods:{
+    auth: function(){
+      if(document.cookie != ""){
+        user = getCookie("username")
+        this.unlogin = false
+      }
+    },
+
     login :function(){
-      this.loginClicked = true
+      // this.loginClicked = true
       var payload = {
         username: this.username,
         password: this.password
       }
-      var data = new FormValue{}
-      data.append("json",JSON.stringify(payload))
+
       fetch("/login",{
         method: "POST",
         headers:{
-          "Content-Type":"application/x-www-form-urlencoded"
+          "content-type":"application/json"
         },
-        body: data
+        body: JSON.stringify(payload)
       })
-      .then(function(res){
+      .then((res)=>{
         if (res.status == 200){
+            console.log("success")
              user = this.username
-             unlogin = false
+             this.unlogin = false
+            //  this.loginClicked = false
         } else{
-          res.json().then(function(data){
+          res.json().then((data)=>{
             console.log(data)
-            this.$refs.snackbar.open();
+            // this.$refs.snackbar.open();
+            // this.loginClicked = false
           })
         }
-        this.loginClicked = false
       })
     },
 
     regist: function(){
-        this.registClicked = true
+          // this.registClicked = true
         var payload = {
           username: this.username,
           password: this.password
         }
-        var data = new FormValue{}
-        data.append("json",JSON.stringify(payload))
+
         fetch('/regist',{
           method: "PUT",
           headers: {
-            "Content-Type":"application/x-www-form-urlencoded"
+            "content-type":"application/json"
           },
-          body: data
+          body: JSON.stringify(payload)
         })
-        .then(function(res){
+        .then((res)=>{
+
           if (res.status== 200) {
-            res.json().then(function(data){
+            res.json().then((data) =>{
                 this.StatusOk = true
                 this.StatusInfo = "Success"
                 console.log(data)
+                alert("registed")
             })
+
           }else{
-            res.json().then(function(data){
+            res.json().then((data) =>{
                   console.log(data)
-                  this.$refs.snackbar.open();
+                  alert(data)
             })
           }
-          this.registClicked = false
-          this.$refs.snackbar.open();
         })
     }
   }

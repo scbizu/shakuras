@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -48,6 +50,12 @@ type FrameDropper struct {
 	lastpkttime  time.Duration
 	delay        time.Duration
 	SkipInterval int
+}
+
+//User user
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 var (
@@ -326,8 +334,13 @@ func main() {
 	})
 
 	e.PUT("/regist", func(c echo.Context) error {
-		username := c.FormValue("username")
-		pwd := c.FormValue("password")
+
+		user := new(User)
+		if err := c.Bind(user); err != nil {
+			return c.JSON(http.StatusBadRequest, "bad request")
+		}
+		username := user.Username
+		pwd := user.Password
 		if username == "" || pwd == "" {
 			return c.JSON(http.StatusBadRequest, "bad request")
 		}
@@ -349,10 +362,11 @@ func main() {
 		if err != nil {
 			return c.JSON(http.StatusBadGateway, err.Error())
 		}
-		uinfo, err := model.SelectDB("userinfo", uhash)
+		uinfo, db, err := model.SelectDB("userinfo", uhash)
 		if err != nil {
 			return c.JSON(http.StatusBadGateway, err.Error())
 		}
+		db.Close()
 		if uinfo == nil {
 			err = model.InsertDB("userinfo", uhash, string(userInfoJSON))
 			if err != nil {
@@ -364,26 +378,25 @@ func main() {
 	})
 
 	e.POST("/login", func(c echo.Context) error {
-		username := c.FormValue("username")
-		password := c.FormValue("password")
+		user := new(User)
+		if err := c.Bind(user); err != nil {
+			return c.JSON(http.StatusBadRequest, "Bad Request")
+		}
+		username := user.Username
+		password := user.Password
 		if username == "" || password == "" {
 			return c.JSON(http.StatusBadRequest, "Bad Request")
 		}
 		uhash := md5hash(username)
 		model.DefaultCachePath = ".usercache"
-		err := model.CreateBucket("userinfo")
+		uinfo, _, err := model.SelectDB("userinfo", uhash)
 		if err != nil {
 			return c.JSON(http.StatusServiceUnavailable, err.Error())
 		}
-		uinfo, err := model.SelectDB("userinfo", uhash)
-		if err != nil {
-			return c.JSON(http.StatusServiceUnavailable, err.Error())
-		}
-		if uinfo == nil {
-			return c.JSON(http.StatusBadRequest, "no such user")
-		}
+		// db.Close()
 		realInfo := make(map[string]string)
 		err = json.Unmarshal(uinfo, &realInfo)
+
 		if err != nil {
 			return c.JSON(http.StatusServiceUnavailable, err.Error())
 		}
@@ -419,4 +432,10 @@ func main() {
 	// })
 
 	e.Logger.Fatal(e.Start(":8090"))
+}
+
+func md5hash(rawstr string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(rawstr))
+	return hex.EncodeToString(hasher.Sum(nil))
 }
