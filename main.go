@@ -128,11 +128,15 @@ func main() {
 	//WS server
 	h := kara.NewHub()
 	go h.Run()
-
+	//Live
 	//RTMP server
 	s := new(rtmp.Server)
+	// fenix := new(rtmp.Server)
+	// fenix.Addr =":1936"
 	mutex := new(sync.RWMutex)
 	channels := make(map[string]*Channel)
+	// FenixChannels := make(map[string]*Channel)
+	// FenixMutex := new(sync.RWMutex)
 	//hanleplay
 	s.HandlePlay = func(conn *rtmp.Conn) {
 		mutex.RLock()
@@ -248,7 +252,12 @@ func main() {
 
 	go http.ListenAndServe(":8091", nil)
 
-	//Web Server
+	go func() {
+		commands := []string{"-re", "-i", "/Users/scnace/go/src/Project/shakuras/static/video/17459827-1.flv", "-vcodec", "libx264", "-acodec", "aac", "-f", "flv", "rtmp://localhost/fenix"}
+		cm := exec.Command("ffmpeg", commands...)
+		cm.Run()
+	}()
+	//API Gateway
 	e := echo.New()
 
 	e.Static("/", "static")
@@ -259,6 +268,7 @@ func main() {
 	e.File("/", "static/chat.html")
 
 	e.File("/live", "static/live.html")
+	e.File("/fenix", "static/fenix.html")
 	e.GET("/video", func(c echo.Context) error {
 		vid := c.QueryParam("vid")
 		if vid == "" {
@@ -432,6 +442,7 @@ func main() {
 	// })
 
 	e.Logger.Fatal(e.Start(":8090"))
+
 }
 
 func md5hash(rawstr string) string {

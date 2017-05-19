@@ -177,3 +177,24 @@ func GetFirstVID(dbpath string) (map[string]string, error) {
 	})
 	return firstInfo, nil
 }
+
+//GetRandomVID will  get random vid
+func GetRandomVID(dbpath string, random int) (map[string]string, error) {
+	db, err := bolt.Open(dbpath, 0600, &bolt.Options{Timeout: 5 * time.Second})
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	firstInfo := make(map[string]string)
+	db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(Bucketname))
+		if b == nil {
+			panic("bucket not find")
+		}
+		c := b.Cursor()
+		k, v := c.Last()
+		firstInfo[string(k)] = string(v)
+		return nil
+	})
+	return firstInfo, nil
+}
