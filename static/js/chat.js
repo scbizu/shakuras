@@ -192,6 +192,7 @@ var account = new Vue({
         if (res.status == 200){
             console.log("success")
              user = this.username
+             chats.contents.push("欢迎"+user+"阁下加入聊天室")
              this.unlogin = false
             //  this.loginClicked = false
         } else{

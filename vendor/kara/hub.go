@@ -32,9 +32,11 @@ func (h *Hub) Run() error {
 		select {
 		case client := <-h.register:
 			h.clients[client] = true
+			client.sendchannel <- []byte("Nace > 来了一个新的基佬")
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {
 				delete(h.clients, client)
+				client.sendchannel <- []byte("Nace > 一个基佬走了..")
 				close(client.sendchannel)
 			}
 		case message := <-h.broadcast:
